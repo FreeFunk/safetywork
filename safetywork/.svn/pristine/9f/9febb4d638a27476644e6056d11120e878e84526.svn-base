@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+</head>
+<body style="background: white">
+    <div id="transitCarInfoTable">
+            <!--<script type="text/html" id="table-BigdataBeiSafetyCarInfoPlatform-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="carXiangXi"><i class="layui-icon layui-icon-edit"></i>查看</a>
+            </script>-->
+    </div>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index:'lib/index',
+        common:'common',
+        $tool:'tool'
+    }).use(['index','table', 'form','common','laydate','$tool','laytpl'], function(exports){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,laydate = layui.laydate
+            ,$tool = layui.$tool,
+            //创建表格
+
+          tableCar = function(){
+            var queryArgs = $tool.getQueryParam();
+            var carPlateNum = queryArgs['carPlateNum'];
+            var jyCertNumber = queryArgs['jyCertNumber'];
+            var carFrameNum = queryArgs['carFrameNum'];
+            var contactPerson = queryArgs['contactPerson'];
+            var index = layer.load(2,{
+                content: "<div style='margin-left:-18px;padding-top:44px;width:120px;color:black;'>正&nbsp;在&nbsp;查&nbsp;询</div>"
+            });
+            admin.req({
+                url:layui.setter.basePath + '/admin/bigdataBeidouSafetyCarInfo/bigPlatformCar.jsn',
+                data:{carPlateNum,jyCertNumber,carFrameNum,contactPerson},
+                datatype:'JSON',
+                method:"post",
+                success:function(res){
+                    debugger;
+                    if(res.success){
+                        layer.close(index);
+                        var list = res.data;
+                        var html  = "";
+                        if(list.length>0){
+                            for(var i=0;i<list.length;i++){
+                                html += "<p style='width: 94%;line-height: 35px;margin-left: 60px;font-size: 15px;margin-top: 10px;'><span style='font-weight: 900;'>企业名称：</span>";
+                                if(list[i].teamName==null || list[i].teamName==''){
+                                    html+="暂无";
+                                }else {
+                                    html+=list[i].teamName;
+                                }
+                                html +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight: 900;'>许可证号：</span>";
+                                if(list[i].jingxingNum==null || list[i].jingxingNum==''){
+                                    html+="暂无";
+                                }else {
+                                    html+=list[i].jingxingNum;
+                                }
+                                html+="&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight: 900;'>车辆数量：</span>"+list[i].carNum+"</p>";
+                                html +=" <table id=\"table_cz\" class=\"table_cz\"  width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                                     "<tr >\n"+
+                                    "<th align='center' width='5%' style='height: 35px'>序号</th>\n" +
+                                    "<th align='center' width='8%' style='height: 35px'>车牌号</th>\n" +
+                                    "<th align='center' width='7%'  style='height: 35px' >车牌颜色</th>\n" +
+                                    "<th align='center' width='15%'  style='height: 35px' >车架号</th>\n" +
+                                    "<th align='center' width='15%'   style='height: 35px'>业户名称</th>\n" +
+                                    "<th align='center' width='10%'   style='height: 35px'>年审截止日期</th>\n" +
+                                    "<th align='center' width='10%'   style='height: 35px'>年审状态</th>\n" +
+                                    "<th align='center' width='10%'   style='height: 35px'>经营许可状态</th>\n" +
+                                    "<th align='center' width='10%'   style='height: 35px'>认证状态</th>\n" +
+                                    "<th align='center' width='10%'  style='height: 35px' >操作</th>\n" +
+                                    "                    </tr>";
+                                if(list.length==0){
+                                    html += " <tr>   <td align='center'  colspan='8'  style='height: 35px' >暂无 </td>  </tr>";
+                                }else {
+                                    var transitCarInfoList = list[i].transitCarInfoList;
+                                    for(var j =0;j<transitCarInfoList.length;j++){
+                                        html += "           <tr>       " +
+                                            "<td align='center'  style='height: 35px' >"+ (parseInt(j)+1)+"&nbsp;</td>\n" +
+                                            "<td align='center'  style='height: 35px' >"+transitCarInfoList[j].carPlateNum+"&nbsp;</td>\n" +
+                                            "<td align='center'  style='height: 35px' >"+ transitCarInfoList[j].carPlateColor+ "&nbsp;</td>\n" +
+                                            "<td align='center'  style='height: 35px' >"+transitCarInfoList[j].carFrameNum+"&nbsp;</td>\n" +
+                                            "<td align='center'  style='height: 35px' >"+transitCarInfoList[j].contactPerson+"&nbsp;</td>\n" +
+                                            "<td align='center'  style='height: 35px' > "+transitCarInfoList[j].contactPerson+"&nbsp;</td>\n";
+                                        if(transitCarInfoList[j].remark=='超期'){
+                                            html += "<td align='center'  style='height: 35px;background: #f9c3cb;' >"+transitCarInfoList[j].remark+"&nbsp;</td>\n" ;
+                                        }else {
+                                            html += "<td align='center'  style='height: 35px' >"+transitCarInfoList[j].remark+"&nbsp;</td>\n" ;
+                                        }
+                                        if(transitCarInfoList[j].licenceValid=='超期'){
+                                            html += "<td align='center'  style='height: 35px;background: #f9c3cb;color: blue;' >"+transitCarInfoList[j].licenceValid+"&nbsp;</td>\n" ;
+                                        }else {
+                                            html += "<td align='center'  style='height: 35px' >"+transitCarInfoList[j].licenceValid+"&nbsp;</td>\n" ;
+                                        }
+                                        if(transitCarInfoList[j].wxChezhuState!='1'){
+                                            html += "<td align='center'  style='height: 35px;background: #f9c3cb;' >未确认&nbsp;</td>\n" ;
+                                        }else {
+                                            html += "<td align='center'  style='height: 35px'>已确认&nbsp;</td>\n" ;
+                                        }
+
+                                        html +="<td align='center'  style='height: 35px'>" +
+                                            "<a class=\"layui-btn layui-btn-normal layui-btn-xs\" onclick=\"getById('"+transitCarInfoList[j].id+"','" + transitCarInfoList[j].carPlateNum + "')\">查看</a>" ;
+                                        /*if(transitCarInfoList[j].ownerCarTeamId !=null && transitCarInfoList[j].ownerCarTeamId=='neiwang'){
+                                            html +="<a class=\"btn-wrap\" onclick=\"chooseCheDui('"+transitCarInfoList[j].id+"','"+transitCarInfoList[j].ownerCarTeamId+"')\"  title=\"车队\" >车队</a>";
+                                        }*/
+                                        html += "</td>\n" +
+                                            "</tr>";
+                                    }
+                                }
+                                html +="</table>";
+                            }
+                        }else {
+                            html += "<p style='width: 94%;\n" + "line-height: 35px;\n" + "margin-left: 60px;\n" +
+                                "font-size: 15px;'><span style='font-weight: 900;'>企业名称：</span>";
+                            html += "暂无";
+                            html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight: 900;'>许可证号：</span>";
+                            html += "暂无";
+                            html += "&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight: 900;'>车辆数量：</span>0</p>";
+                            html += " <table id=\"table_cz\" class=\"table_cz\"  width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                                "<tr >\n" +
+                                "<th align='center' width='10%' style='height: 35px'>车牌号</th>\n" +
+                                "<th align='center' width='10%'  style='height: 35px' >车牌颜色</th>\n" +
+                                "<th align='center' width='10%'  style='height: 35px' >车架号</th>\n" +
+                                "<th align='center' width='10%'   style='height: 35px'>联系人</th>\n" +
+                                "<th align='center' width='10%'   style='height: 35px'>年审截止日期</th>\n" +
+                                "<th align='center' width='10%'   style='height: 35px'>年审状态</th>\n" +
+                                " <th align='center' width='10%'   style='height: 35px'>认证状态</th>\n" +
+                                "<th align='center' width='10%'  style='height: 35px'>操作</th>\n" +
+                                "</tr>";
+                            html += " <tr><td align='center'  colspan='8'  style='height: 35px'>暂无 </td></tr>";
+                        }
+                        $("#transitCarInfoTable").html(html);
+                    }
+                },
+            });
+        }
+        tableCar();
+
+
+
+        /*carXiangXi = function(){
+
+        };*/
+
+        //绑定点击事件
+        $('.layui-btn.layuiadmin-btn-comm').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //日期范围
+        lay('.test-item').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+        laydate.render({
+            elem: '#test6'
+            ,range: true
+        });
+
+    });
+
+</script>
+<script type="text/javascript">
+    function getById(id,carPlateNum){
+        parent.layui.index.openTabsPage('views/com/edgedo/sys/bigdatabeidousafetycarinfo/BigdataBeidouSafetyCarInfoDetails.html?id='+id, carPlateNum);
+    }
+</script>
+</body>
+</html>
+

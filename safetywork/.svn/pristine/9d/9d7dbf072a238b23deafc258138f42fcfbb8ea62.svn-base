@@ -1,0 +1,8 @@
+package com.edgedo.sys.queryvo;
+
+import com.edgedo.sys.entity.BigdataBeidouSafetyCarInfo;
+
+public class BigdataBeidouSafetyCarInfoView extends BigdataBeidouSafetyCarInfo {
+
+
+}

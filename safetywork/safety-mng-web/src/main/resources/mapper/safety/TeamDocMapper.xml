@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.TeamDocMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.TeamDoc" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="TEAM_ID" property="teamId"/>
+			<result column="TEAM_NAME" property="teamName"/>
+			<result column="TEAM_TYPE" property="teamType"/>
+			<result column="CAR_SUM_NUM" property="carSumNum"/>
+			<result column="CONFIRM_RATE" property="confirmRate"/>
+			<result column="CONFIRM_NUM" property="confirmNum"/>
+			<result column="UN_TASK_WORK" property="unTaskWork"/>
+			<result column="UPDATE_TIME" property="updateTime"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.TeamDocView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, TEAM_ID, TEAM_NAME, TEAM_TYPE, CAR_SUM_NUM, CONFIRM_RATE, CONFIRM_NUM, UN_TASK_WORK, UPDATE_TIME
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.createTime != null'>
+					AND  CREATE_TIME = #{queryObj.createTime}
+				</if>
+				<if test='queryObj != null and  queryObj.carSumNum != null '>
+					AND  CAR_SUM_NUM = #{queryObj.carSumNum}
+				</if>
+				<if test='queryObj != null and  queryObj.confirmNum != null '>
+					AND  CONFIRM_NUM = #{queryObj.confirmNum}
+				</if>
+				<if test='queryObj != null and  queryObj.unTaskWork != null '>
+					AND  UN_TASK_WORK = #{queryObj.unTaskWork}
+				</if>
+				<if test='queryObj != null and  queryObj.updateTime != null'>
+					AND  UPDATE_TIME = #{queryObj.updateTime}
+				</if>
+				<if test="queryObj != null and  queryObj.teamName != null  and  queryObj.teamName != ''">
+					AND  TEAM_NAME like concat('%',#{queryObj.teamName},'%')
+				</if>
+				<if test="userType != null and  userType == 'YGC'">
+					AND  (TEAM_TYPE = 'TEAM_KY' OR TEAM_TYPE = 'TEAM_WXHWYS')
+				</if>
+				<if test="userType != null and  userType == 'WH'">
+					AND   TEAM_TYPE = 'TEAM_WXHWYS'
+				</if>
+				<if test="userType != null and  userType == 'KY'">
+					AND  TEAM_TYPE = 'TEAM_KY'
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.TeamDocQuery" resultMap="BaseResultViewMap">
+	  /*!mycat:sql = select app_id from zhyg_db where app_id = '${cityId}'*/
+  		select <include refid="Base_Column_List"/> from team_doc 
+  		<include refid="where"/>
+
+	  ORDER BY CAR_SUM_NUM DESC
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.TeamDocQuery" resultMap="BaseResultViewMap">
+	  /*!mycat:sql = select app_id from zhyg_db where app_id = '${cityId}'*/
+  		select <include refid="Base_Column_List"/> from team_doc 
+  		<include refid="where"/>
+  </select>
+  
+  
+</mapper>

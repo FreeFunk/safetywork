@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/layui_ext/dtree/dtree.css">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/layui_ext/dtree/font/dtreefont.css">
+    <script type="text/javascript" src="../../js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../js/video-player.js"></script>
+    <script type="text/javascript" src="../../js/commonLiveService.js"></script>
+    <style type="text/css">
+        .anchorBL{display:none;}
+        .carInfo{
+            margin-left: 16px;
+            line-height: 22px;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 0 15px 0 0;
+        }
+        .carInfoText{
+            font-weight:100;
+        }
+        .carInfoTitle{
+            text-align: center;
+            line-height: 30px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="layui-row">
+    <div class="layui-col-md3">
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <div class="layui-form" style="padding-left: 16px">
+                    <input type="text" id="carPlateNum" name="carPlateNum" placeholder="车牌号" style="    height: 22px;
+    margin-top: 8px;
+    width: 55%;display: inline; padding-left: 0px;"
+                   class="layui-input">
+                    <button style="height: 22px;
+    line-height: 22px;
+    padding: 0 3px;" id="buttonSelect" class="layui-btn layuiadmin-btn-comm" data-type="searchCarPlate">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                    <button style="height: 22px;
+    line-height: 22px;
+    padding: 0 3px;" id="buttonRefresh" class="layui-btn layuiadmin-btn-comm" data-type="refershTree">
+                        <i class="layui-icon layui-icon-refresh layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+                <div style="height: 300px;overflow: auto;" id="toolbarDiv">
+                    <ul id="demoTree" class="dtree" style="width: 280px" data-id="0"></ul>
+                </div>
+                <div style="height: 190px;overflow: auto;">
+                    <p class="carInfoTitle">车辆信息</p>
+                    <ul>
+                        <li class="carInfo">车牌：<span class="carInfoText" id="plateNum"></span></li>
+                        <li class="carInfo">颜色：<span class="carInfoText" id="plateColor"></span></li>
+                        <li class="carInfo">类型：<span class="carInfoText" id="carType"></span></li>
+                        <li class="carInfo">经度：<span class="carInfoText" id="longitude"></span></li>
+                        <li class="carInfo">纬度：<span class="carInfoText" id="latitude"></span></li>
+                        <li class="carInfo">位置：<span class="carInfoText" id="localtion"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md8" style="margin-left: -30px;">
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <div  style=" height: 520px;" id="LAY_test_bMap_div1"></div>
+                <!-- 视频dom -->
+                <div id="video" style="height: 520px; display: none">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md1" style="margin-left: -30px;">
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <button type="button" class="layui-btn"  data-type="showMap">地图</button>
+                <button type="button" style="margin-top: 20px; margin-left: 0px;"  data-type="showVideo" class="layui-btn layui-btn-normal">视频</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index:'lib/index',
+            common:'common',
+            dtree:'dtree'
+        }).use(['index','table', 'form','common','dtree','layer','bMap'], function(exports){
+            var $ = layui.$
+                ,table = layui.table
+                ,common = layui.common
+                ,admin = layui.admin
+                ,form = layui.form
+                ,layer = layui.layer
+                ,dtree = layui.dtree
+                ,bMap = layui.bMap;
+
+            //初始化
+            $(function(){
+                commonLiveService.init('video');
+                $('#LAY_test_bMap_div1')[0].style.display = "block";
+            });
+
+            //建议这么用，简单明了
+            var map;
+            bMap.render(function(){//这里直接写回调函数即可
+                map = new BMap.Map("LAY_test_bMap_div1"); //js严格区分大小写，因此BMap和bMap是两个不同变量。
+                map.enableScrollWheelZoom();
+                var point = new BMap.Point(119.59991, 39.971613);  // 创建点坐标
+                map.centerAndZoom(point, 12);                 // 初始化地图，设置中心点坐标和地图级别
+            });
+
+            var DemoTree;
+            initTree = function () {
+                admin.req({
+                    url:layui.setter.basePath +'/admin/bigdataBeidouSafetyCarInfo/getCarTree.jsn',
+                    data:{"id":"ROOT"},
+                    method:"post",
+                    success:function (data) {
+                        DemoTree = dtree.render({
+                            elem: "#demoTree",
+                            data: data.data, // 使用data加载
+                            //url:layui.setter.basePath+"/admin/sysOrg/loadOrg.jsn",
+                            checkbar:true,
+                            checkbarType: "p-casc",
+                            line:true,
+                            scroll:"#toolbarDiv",
+                            initLevel: "2",
+                            type:"all"
+                        });
+                    }
+                });
+            }
+            initTree();
+
+            var opts = {
+                width : 300,     // 信息窗口宽度
+                height: 100,     // 信息窗口高度
+                title : "", // 信息窗口标题
+                enableMessage:true,//设置允许信息窗发送短息
+            }
+            //监听复选框
+            dtree.on("chooseDone('demoTree')" ,function(obj){
+                console.log(obj.checkbarParams); // 选中的所有复选框的参数
+                var checkbarParams = obj.checkbarParams;
+                var carPlateNumStr = "";
+                for(var i=0;i<checkbarParams.length;i++){
+                    if(checkbarParams[i].level=="4"){
+                        if(carPlateNumStr==""){
+                            carPlateNumStr = checkbarParams[i].context;
+                        }else {
+                            carPlateNumStr = carPlateNumStr+","+checkbarParams[i].context;
+                        }
+                    }
+                }
+                admin.req({
+                    url:layui.setter.basePath +'/admin/carInfo/selectByCarPlateNum.jsn',
+                    data:{"carPlateNumStr":carPlateNumStr},
+                    method:"post",
+                    success:function (data) {
+                        map.clearOverlays();
+                        for(var i = 0;i<data.data.length;i++){
+                            //画点
+                            var point = {lat: data.data[i].latitude, lng: data.data[i].longitude};
+                            var new_point = GpsToBaiduPoint(point);
+                            var marker = new BMap.Marker(new_point);
+                            var content = "<p style='font-size: 12px;'><span style='color: #4d89bf;'>车牌号：</span>"+data.data[i].carPlateNum +"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>颜色：</span>"+data.data[i].carPlateColorText +"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>车辆类型：</span>"+data.data[i].carType+"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>位置：</span>"+data.data[i].localtionInfo+"</p>";
+                            map.addOverlay(marker);
+                            // 将标注添加到地图中
+                            addClickHandler(content,marker);
+                            //map.centerAndZoom(new_point, 12);
+                        }
+
+                        /*if(data.data.length==0){
+                            $("#plateNum")[0].innerHTML = "";
+                            $("#plateColor")[0].innerHTML = "";
+                            $("#carType")[0].innerHTML = "";
+                            $("#longitude")[0].innerHTML = "";
+                            $("#latitude")[0].innerHTML = "";
+                            $("#localtion")[0].innerHTML = "";
+                        }*/
+                    }
+                })
+            });
+            // 绑定节点单击事件
+            dtree.on("node(demoTree)", function(obj){
+                var show = $('#LAY_test_bMap_div1')[0].style.display;
+                if(show=="block" || show==""){
+                var nodeId = obj.param.nodeId;
+                var $checkbar = DemoTree.getNodeDom(nodeId).checkbox(); //获取当前点击节点的checkbar的dom
+                DemoTree.temp = [$checkbar]; //通过内置交换对象，将复选框放入交换队列中
+                DemoTree.changeCheck(); //调取内置选中函数，选中/不选/半选复选框
+                var checkbarNodes = dtree.getCheckbarNodesParam("demoTree");
+                if(obj.param.level=="4"){
+                    var carPlateNumStr = obj.param.context;
+                    admin.req({
+                        url:layui.setter.basePath +'/admin/carInfo/selectByCarPlateNum.jsn',
+                        data:{"carPlateNumStr":carPlateNumStr},
+                        method:"post",
+                        success:function (data) {
+                            for(var i = 0;i<data.data.length;i++){
+                                var point = {lat: data.data[i].latitude, lng: data.data[i].longitude};
+                                var new_point = GpsToBaiduPoint(point);
+                                map.centerAndZoom(new_point, 13);
+                                //设置车辆信息
+                                var plateNum = data.data[i].carPlateNum;
+                                if(typeof (plateNum) =='undefined'){
+                                    plateNum = ""
+                                }
+                                var plateColor = data.data[i].carPlateColorText;
+                                if(typeof (plateColor) =='undefined'){
+                                    plateColor = ""
+                                }
+                                var carType = data.data[i].carType;
+                                if(typeof (carType) =='undefined'){
+                                    carType = ""
+                                }
+                                var longitude = data.data[i].longitude;
+                                if(typeof (longitude) =='undefined'){
+                                    longitude = ""
+                                }
+                                var latitude = data.data[i].latitude;
+                                if(typeof (latitude) =='undefined'){
+                                    latitude = ""
+                                }
+                                var localtion = data.data[i].localtionInfo;
+                                if(typeof (localtion) =='undefined'){
+                                    localtion = ""
+                                }
+                                $("#plateNum")[0].innerHTML = plateNum;
+                                $("#plateColor")[0].innerHTML = plateColor;
+                                $("#carType")[0].innerHTML = carType;
+                                $("#longitude")[0].innerHTML = longitude;
+                                $("#latitude")[0].innerHTML = latitude;
+                                $("#localtion")[0].innerHTML = localtion;
+                            }
+
+                            if(data.data.length==0){
+                                $("#plateNum")[0].innerHTML = "";
+                                $("#plateColor")[0].innerHTML = "";
+                                $("#carType")[0].innerHTML = "";
+                                $("#longitude")[0].innerHTML = "";
+                                $("#latitude")[0].innerHTML = "";
+                                $("#localtion")[0].innerHTML = "";
+                            }
+                        }
+                    })
+                    }
+                }
+                //layer.msg(JSON.stringify(checkbarNodes));
+            });
+            // 绑定节点双击事件
+            dtree.on("nodedblclick('demoTree')" ,function(obj){
+
+                if(obj.param.level=="4"){
+
+                    var show = $('#video')[0].style.display;
+
+                    if(show=="block"){
+                        var index = layer.open({
+                            type:3,
+                            time:10000,
+                            zIndex: layer.zIndex
+                        });
+                        var carId = obj.param.nodeId;
+                        admin.req({
+                            url:layui.setter.basePath +'/admin/bigdataBeidouSafetyCarInfo/loadByIdForVideo.jsn',
+                            data:{"id":carId},
+                            method:"post",
+                            success:function (data) {
+                                commonLiveService.addCarLive(data.data);
+                            }
+                        })
+                    }
+
+                }
+            });
+
+            //加载地图
+            loadMap = function () {
+                //获取所有的选中的坐标
+                var checkbarParams = dtree.getCheckbarNodesParam("demoTree");
+                debugger;
+                var carPlateNumStr = "";
+                for(var i=0;i<checkbarParams.length;i++){
+                    if(checkbarParams[i].level=="4"){
+                        if(carPlateNumStr==""){
+                            carPlateNumStr = checkbarParams[i].context;
+                        }else {
+                            carPlateNumStr = carPlateNumStr+","+checkbarParams[i].context;
+                        }
+                    }
+                }
+                admin.req({
+                    url:layui.setter.basePath +'/admin/carInfo/selectByCarPlateNum.jsn',
+                    data:{"carPlateNumStr":carPlateNumStr},
+                    method:"post",
+                    success:function (data) {
+                        map.clearOverlays();
+                        for(var i = 0;i<data.data.length;i++){
+                            /* //设置车辆信息
+                             var plateNum = data.data[i].carPlateNum;
+                             if(typeof (plateNum) =='undefined'){
+                                 plateNum = ""
+                             }
+                             var plateColor = data.data[i].carPlateColorText;
+                             if(typeof (plateColor) =='undefined'){
+                                 plateColor = ""
+                             }
+                             var carType = data.data[i].carType;
+                             if(typeof (carType) =='undefined'){
+                                 carType = ""
+                             }
+                             var longitude = data.data[i].longitude;
+                             if(typeof (longitude) =='undefined'){
+                                 longitude = ""
+                             }
+                             var latitude = data.data[i].latitude;
+                             if(typeof (latitude) =='undefined'){
+                                 latitude = ""
+                             }
+                             var localtion = data.data[i].localtionInfo;
+                             if(typeof (localtion) =='undefined'){
+                                 localtion = ""
+                             }
+                             $("#plateNum")[0].innerHTML = plateNum;
+                             $("#plateColor")[0].innerHTML = plateColor;
+                             $("#carType")[0].innerHTML = carType;
+                             $("#longitude")[0].innerHTML = longitude;
+                             $("#latitude")[0].innerHTML = latitude;
+                             $("#localtion")[0].innerHTML = localtion;*/
+
+                            //画点
+                            var point = {lat: data.data[i].latitude, lng: data.data[i].longitude};
+                            var new_point = GpsToBaiduPoint(point);
+                            var marker = new BMap.Marker(new_point);
+                            var content = "<p style='font-size: 12px;'><span style='color: #4d89bf;'>车牌号：</span>"+data.data[i].carPlateNum +"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>颜色：</span>"+data.data[i].carPlateColorText +"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>车辆类型：</span>"+data.data[i].carType+"</p>"+
+                                "<p style='font-size: 12px;'><span style='color: #4d89bf;'>位置：</span>"+data.data[i].localtionInfo+"</p>";
+                            map.addOverlay(marker);
+                            // 将标注添加到地图中
+                            addClickHandler(content,marker);
+                            map.centerAndZoom(new_point, 12);
+                        }
+
+                        /*if(data.data.length==0){
+                            $("#plateNum")[0].innerHTML = "";
+                            $("#plateColor")[0].innerHTML = "";
+                            $("#carType")[0].innerHTML = "";
+                            $("#longitude")[0].innerHTML = "";
+                            $("#latitude")[0].innerHTML = "";
+                            $("#localtion")[0].innerHTML = "";
+                        }*/
+                    }
+                })
+            }
+            getCarById = function (id) {
+                admin.req({
+                    url:layui.setter.basePath +'/admin/bigdataBeidouSafetyCarInfo/loadById.jsn',
+                    data:{"id":id},
+                    method:"post",
+                    success:function (data) {
+                        var $div = DemoTree.getNode(data.data.id);
+                        var param = DemoTree.getAllParentParam($div);
+                        for(var i=0;i<param.length;i++){
+                            if(!param[i].spread){
+                                var $div1 = DemoTree.getNode(param[i].nodeId);
+                                DemoTree.clickSpread($div1);
+                            }
+                        }
+                        DemoTree.clickSpread($div);
+                        $div.click();
+                        $("#toolbarDiv").scrollTop($div.offset().top-100);
+                    }
+                })
+            }
+
+            //点击事件
+            var active = {
+                 //查询
+                searchCarPlate :function () {
+                    DemoTree.refreshTree();
+                    var carPlateNum = $("#carPlateNum").val();
+                    if(carPlateNum!=""){
+                        //根据车牌号查询车辆
+                        admin.req({
+                            url:layui.setter.basePath +'/admin/bigdataBeidouSafetyCarInfo/selectByCarPlateNum.jsn',
+                            data:{"carPlateNum":carPlateNum},
+                            method:"post",
+                            success:function (data) {
+                                if(data.list.length==0){
+                                    layer.msg('找不到该车辆！', {
+                                        icon: 5
+                                    });
+                                    return false;
+                                }
+                                if(data.list.length==1){
+                                    var $div = DemoTree.getNode(data.list[0].id);
+                                    var param = DemoTree.getAllParentParam($div);
+                                    for(var i=0;i<param.length;i++){
+                                        if(!param[i].spread){
+                                            var $div1 = DemoTree.getNode(param[i].nodeId);
+                                            DemoTree.clickSpread($div1);
+                                        }
+                                    }
+                                    DemoTree.clickSpread($div);
+                                    $div.click();
+                                    $("#toolbarDiv").scrollTop($div.offset().top-100);
+                                }
+                                if(data.list.length>1){
+                                    layer.open({
+                                        type: 2
+                                        ,title: '相关车辆'
+                                        ,content: 'CarList.html?carPlateNum='+carPlateNum
+                                        ,maxmin: true
+                                        ,area: ['550px', '500px']
+                                        /* ,btn: ['确定', '取消']*/
+                                        ,success: function(layero, index){
+
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+                ,refershTree :function () {
+                    DemoTree.refreshTree();
+                    map.clearOverlays();
+                    var point = new BMap.Point(119.59991, 39.971613);
+                    map.centerAndZoom(point, 12);
+                    //清空车辆信息
+                    $("#plateNum")[0].innerHTML = "";
+                    $("#plateColor")[0].innerHTML = "";
+                    $("#carType")[0].innerHTML = "";
+                    $("#longitude")[0].innerHTML = "";
+                    $("#latitude")[0].innerHTML = "";
+                    $("#localtion")[0].innerHTML = "";
+                }
+            ,showMap:function () {
+                    $('#LAY_test_bMap_div1').css('display','block');
+                    $('#video').css('display','none');
+                    loadMap();
+                }
+            ,showVideo :function () {
+                    $('#LAY_test_bMap_div1').css('display','none');
+                    $('#video').css('display','block');
+                }
+            }
+
+            $('.layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+            function addClickHandler(content,marker){
+                marker.addEventListener("click",function(e){
+                    openInfo(content,e)}
+                );
+            }
+
+            function openInfo(content,e){
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+                map.openInfoWindow(infoWindow,point); //开启信息窗口
+            }
+
+
+
+        });
+        /**
+         * 单个坐标转换
+         * @param point
+         * @returns {BMap.Point}
+         */
+        function GpsToBaiduPoint(point){
+            var _t = wgs2bd(point.lat,point.lng);
+            var _BPoint = new BMap.Point(_t[1], _t[0]);
+            return _BPoint;
+        }
+
+        /**
+         * 批量坐标转换
+         * @param points
+         * @returns {Array}
+         */
+        function GpsToBaiduPoints(points){
+            var resultPoints = [];
+            $.each(points,function(index,point){
+                var _t = wgs2bd(point.lat,point.lng);
+                var _BPoint = new BMap.Point(_t[1], _t[0]);
+                resultPoints.push(_BPoint);
+            });
+            return resultPoints;
+        }
+
+        //////////////////////////////////////////
+        //////////////转换核心代码////////////////
+        //////////////////////////////////////////
+        var pi = 3.14159265358979324;
+        var a = 6378245.0;
+        var ee = 0.00669342162296594323;
+        var x_pi = 3.14159265358979324*3000.0/180.0;
+
+
+        //世界大地坐标转为百度坐标
+        function wgs2bd(lat,lon) {
+            var wgs2gcjR = wgs2gcj(lat, lon);
+            var gcj2bdR = gcj2bd(wgs2gcjR[0], wgs2gcjR[1]);
+            return gcj2bdR;
+        }
+
+        function gcj2bd(lat,lon) {
+            var x = lon, y = lat;
+            var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+            var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+            var bd_lon = z * Math.cos(theta) + 0.0065;
+            var bd_lat = z * Math.sin(theta) + 0.006;
+            var result = [];
+            result.push(bd_lat);
+            result.push(bd_lon);
+            return result;
+        }
+
+        function bd2gcj(lat,lon) {
+            var x = lon - 0.0065, y = lat - 0.006;
+            var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi);
+            var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi);
+            var gg_lon = z * Math.cos(theta);
+            var gg_lat = z * Math.sin(theta);
+            var result = [];
+            result.push(gg_lat);
+            result.push(gg_lon);
+            return result;
+        }
+
+        function wgs2gcj(lat,lon) {
+            var dLat = transformLat(lon - 105.0, lat - 35.0);
+            var dLon = transformLon(lon - 105.0, lat - 35.0);
+            var radLat = lat / 180.0 * pi;
+            var magic = Math.sin(radLat);
+            magic = 1 - ee * magic * magic;
+            var sqrtMagic = Math.sqrt(magic);
+            dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+            dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
+            var mgLat = lat + dLat;
+            var mgLon = lon + dLon;
+            var result = [];
+            result.push(mgLat);
+            result.push(mgLon);
+            return result;
+        }
+
+        function transformLat(lat,lon) {
+            var ret = -100.0 + 2.0 * lat + 3.0 * lon + 0.2 * lon * lon + 0.1 * lat * lon + 0.2 * Math.sqrt(Math.abs(lat));
+            ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(lon * pi) + 40.0 * Math.sin(lon / 3.0 * pi)) * 2.0 / 3.0;
+            ret += (160.0 * Math.sin(lon / 12.0 * pi) + 320 * Math.sin(lon * pi  / 30.0)) * 2.0 / 3.0;
+            return ret;
+        }
+
+        function transformLon(lat,lon) {
+            var ret = 300.0 + lat + 2.0 * lon + 0.1 * lat * lat + 0.1 * lat * lon + 0.1 * Math.sqrt(Math.abs(lat));
+            ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(lat * pi) + 40.0 * Math.sin(lat / 3.0 * pi)) * 2.0 / 3.0;
+            ret += (150.0 * Math.sin(lat / 12.0 * pi) + 300.0 * Math.sin(lat / 30.0 * pi)) * 2.0 / 3.0;
+            return ret;
+        }
+
+
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,24 @@
+package com.edgedo.sys.queryvo;
+
+import com.edgedo.sys.entity.BigdataBeidouSafetyCarInfo;
+
+public class BigdataBeidouSafetyCarInfoView extends BigdataBeidouSafetyCarInfo {
+    private String selectTime;
+    private String endTime;
+
+    public String getSelectTime() {
+        return selectTime;
+    }
+
+    public void setSelectTime(String selectTime) {
+        this.selectTime = selectTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+}

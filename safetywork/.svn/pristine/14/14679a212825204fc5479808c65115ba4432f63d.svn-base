@@ -1,0 +1,15 @@
+package com.edgedo.sys.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * @ClassName ZhygDataController
+ * @Description TODO
+ * @Author 床前明月光
+ * @Date 2019/9/2 17:14
+ **/
+@Controller
+@RequestMapping("/admin/zhygData")
+public class ZhygDataController {
+}

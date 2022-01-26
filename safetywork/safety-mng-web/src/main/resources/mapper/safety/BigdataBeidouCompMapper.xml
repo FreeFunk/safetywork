@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.BigdataBeidouCompMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.BigdataBeidouComp" >
+			<id column="ID" property="id"/>
+			<result column="COMP_NAME" property="compName"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="SING_KEY" property="singKey"/>
+			<result column="IP_ADDRESS" property="ipAddress"/>
+			<result column="COMP_STATE" property="compState"/>
+			<result column="IP_809_ADDRESS" property="ip809Address"/>
+			<result column="LAST_UP_TIME" property="lastUpTime"/>
+			<result column="COMP_FLAG" property="compFlag"/>
+			<result column="COMP_CAR_TYPE" property="compCarType"/>
+			<result column="LIVE_IP" property="liveIp"/>
+			<result column="LIVE_PORT" property="livePort"/>
+			<result column="LIVE_TYPE" property="liveType"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.BigdataBeidouCompView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, COMP_NAME, CREATE_TIME, SING_KEY, IP_ADDRESS, COMP_STATE, IP_809_ADDRESS, LAST_UP_TIME, COMP_FLAG, COMP_CAR_TYPE, LIVE_IP, LIVE_PORT, LIVE_TYPE
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.createTime != null'>
+					AND  CREATE_TIME = #{queryObj.createTime}
+				</if>
+				<if test='queryObj != null and  queryObj.lastUpTime != null'>
+					AND  LAST_UP_TIME = #{queryObj.lastUpTime}
+				</if>
+				<if test='queryObj != null and  queryObj.livePort != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.livePort)'>
+					AND  LIVE_PORT = #{queryObj.livePort}
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.BigdataBeidouCompQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from bigdata_beidou_comp 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.BigdataBeidouCompQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from bigdata_beidou_comp 
+  		<include refid="where"/>
+  </select>
+  
+  
+</mapper>

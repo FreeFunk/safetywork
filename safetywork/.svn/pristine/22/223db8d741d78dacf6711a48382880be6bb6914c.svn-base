@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+
+        <div class="layui-card-body" id="layui-card-body">
+            <!--<div style="font-size: 17px;padding-bottom: 5px;margin-left: 40px;font-weight: bold;" id="title" name="title"></div>-->
+            <div id="BigdataBeiSafetyCarInfoPlatform" lay-filter="Car_table"></div>
+            <!--<table id="BigdataBeiSafetyCarInfoPlatform" width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <th align="center" width="10%" style="height: 35px">序号</th>
+                        <th align="center" width="20%" style="height: 35px">车牌号</th>
+                        <th align="center" width="10%" style="height: 35px">车牌颜色</th>
+                        <th align="center" width="15%" style="height: 35px">车架号</th>
+                        <th align="center" width="20%" style="height: 35px">业户名称</th>
+                        <th align="center" width="15%" style="height: 35px">年审截止日期</th>
+                        <th align="center" width="10%" style="height: 35px">年审状态</th>
+                        <th align="center" width="10%" style="height: 35px">经营许可状态</th>
+                        <th align="center" width="10%" style="height: 35px">认证状态</th>
+                        <th align="center" width="20%" style="height: 35px">操作</th>
+                    </tr>
+                    <tr>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">1</td>
+                        <td align="center" style="height: 35px;">
+                            <script type="text/html" id="table-BigdataBeiSafetyCarInfoPlatform-list">
+                                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>查看</a>
+                            </script>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>-->
+            <table id="BigdataBeiSafetyCarInfoPlatform-list" lay-filter="BigdataBeiSafetyCarInfoPlatform-list" ></table>
+            <script type="text/html" id="table-BigdataBeiSafetyCarInfoPlatform-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>查看</a>
+            </script>
+        </div>
+    </div>
+</div>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index:'lib/index',
+        common:'common',
+        $tool:'tool'
+    }).use(['index','table', 'form','common','laydate','$tool','laytpl'], function(exports){
+        var $ = layui.$
+            ,table = layui.table
+            ,common = layui.common
+            ,admin = layui.admin
+            ,form = layui.form
+            ,$tool = layui.$tool
+            ,laydate = layui.laydate
+            ,laytpl = layui.laytpl
+
+
+          tableCar = function(){
+            admin.req({
+                url:layui.setter.basePath + '/admin/bigdataBeidouSafetyCarInfo/bigPlatformCar.jsn',
+                data:{},
+                method:"post",
+                success:function(res){
+                    if(res.success){
+                        var data= res.data;
+                        var carBody = document.getElementById('layui-card-body');
+                        for(var i=0;i<data.size();i++){
+                            carBody.innerHTML = '<div class="title"  style="font-size: 17px;padding-bottom: 5px;margin-left: 40px;font-weight: bold;">'+'</div>'
+                            var title = document.getElementById("title");
+                            title.innerHTML = '<p>'+'企业名称:'+data[i].teamName+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                                +'许可证号:'+data[i].jingxingNum+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+'车辆数量：'+data[i].carNum+'<\p>';
+
+                            var carData = data[i].transitCarInfoList;
+                            carBody.innerHTML =
+                                '<table id="BigdataBeiSafetyCarInfoPlatform" width="100%" border="0" cellspacing="0" cellpadding="0">'
+                                    +'<tobay name="carData">' +
+                                        '<tr>' +
+                                                '<th align="center" width="10%" style="height: 35px">'+'序号'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'车牌号'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'车牌颜色'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'车架号'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'业户名称'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'年审截止日期'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'年审状态'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'经营许可状态'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'认证状态'+'</th>'+
+                                                '<th align="center" width="10%" style="height: 35px">'+'操作'+'</th>'+
+                                        '</tr>'+
+                                    '</tobay>'
+                                +'</table>';
+                            for(var j=0;j<carData.size();j++){
+                                var th = document.getElementsByName('carData');
+                                th.innerHTML= '<tr>' +
+                                    '<td align="center"  style="height: 35px">'+(j+1)+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+carData[j].carPlateNum+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+carData[j].carPlateColor+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+carData[j].carFrameNum+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+carData[j].contactPerson+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+'年审截止日期'+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+'年审状态'+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+carData[j].licenceValid+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+'认证状态'+'</td>'+
+                                    '<td align="center"  style="height: 35px">'+'操作'+'</td>'+
+                                    '</tr>';
+                            }
+                        }
+                    }
+                },
+            });
+        }
+        tableCar();
+
+        //绑定点击事件
+        $('.layui-btn.layuiadmin-btn-comm').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //日期范围
+        lay('.test-item').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+        laydate.render({
+            elem: '#test6'
+            ,range: true
+        });
+
+
+    });
+
+</script>
+</body>
+</html>
+

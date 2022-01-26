@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .neirong{
+            border: 1px solid #bcb6ae;
+        }
+        .neirong .ziti{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+        }
+        .neirong .zt{
+            font-weight: 100;
+            color: #887f7f;
+        }
+        .neirong .ziti1{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+            float: left;
+            width: 45%;
+            position: relative;
+        }
+        .neirong .ziti2{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+            width: 45%;
+            float: right;
+        }
+    </style>
+</head>
+<body style="background: white">
+    <form name="carDetails" id="carDetails">
+        <div id="transitInfoNew" style="padding:0 150px;padding-top: 30px">
+            <div class="biaotou" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info" style="color: #2452a5;line-height: 30px;font-size: 16px;">车辆基本信息</div>
+            </div>
+            <div class="neirong" style="height: 350px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>车牌号码：</span>
+                    <input type="hidden" id="carId" name="carId" value="冀C21112">
+                </p>
+                <p class="ziti" style="margin-top: 10px;width: 45%;float: right;">
+                    <span>车架号码：</span>
+                    <span class="zt">LZZ1CLVB1GN195868</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+            </div>
+            <div class="biaotou" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info" style="color: #2452a5;line-height: 30px;font-size: 16px;">车辆北斗定位情况</div>
+            </div>
+            <div class="neirong" style="height: 80px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>车牌号码：</span>
+                    <input type="hidden" id="carId" name="carId" value="冀C21112">
+                </p>
+                <p class="ziti" style="margin-top: 10px;width: 45%;float: right;">
+                    <span>车架号码：</span>
+                    <span class="zt">LZZ1CLVB1GN195868</span>
+                </p>
+            </div>
+            <div class="biaotou" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info" style="color: #2452a5;line-height: 30px;font-size: 16px;">运输企业信息</div>
+            </div>
+            <div class="neirong" style="height: 150px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>车牌号码：</span>
+                    <input type="hidden" id="carId" name="carId" value="冀C21112">
+                </p>
+                <p class="ziti" style="margin-top: 10px;width: 45%;float: right;">
+                    <span>车架号码：</span>
+                    <span class="zt">LZZ1CLVB1GN195868</span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt">黄</span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt">324314527</span>
+                </p>
+            </div>
+            <div class="biaotou" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info" style="color: #2452a5;line-height: 30px;font-size: 16px;">车辆检查情况</div>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+        $tool:'tool'
+    }).use(['index', 'form','$tool','laydate'], function(){
+        var $ = layui.$
+            ,$tool = layui.$tool
+            ,laydate = layui.laydate
+            ,admin = layui.admin
+            ,form = layui.form;
+
+        carTableFormInit() = function(){
+
+        }
+
+
+    })
+</script>
+</body>
+</html>

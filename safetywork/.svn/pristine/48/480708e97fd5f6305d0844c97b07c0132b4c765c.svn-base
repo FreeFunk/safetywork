@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .neirong{
+            border: 1px solid #bcb6ae;
+        }
+        .neirong .ziti{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+        }
+        .neirong .zt{
+            font-weight: 100;
+            color: #887f7f;
+        }
+        .neirong .ziti1{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+            float: left;
+            width: 45%;
+            position: relative;
+        }
+        .neirong .ziti2{
+            font-weight: 900;
+            font-size: 14px;
+            padding-left: 30px;
+            text-align: left;
+            line-height: 30px;
+            width: 45%;
+            float: right;
+        }
+        .biaoti{
+            border: 1px solid #bcb6ae;
+            height: 30px;
+            text-align: center;
+            background-color: #fffbfbd1;
+            box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);
+        }
+        .info{
+            color: #2452a5;
+            line-height: 30px;
+            font-size: 16px;
+        }
+        .neirong3 {
+            border: 1px solid #bcb6ae;
+            height: 300px;
+        }
+        .table_cz{
+            height: 100%;
+            padding-bottom: 30px;
+            width: 100%;
+            table-layout: fixed;
+            /*height: 80%;
+            padding-bottom: 50px;*/
+        }
+    </style>
+</head>
+<body style="background: white;" >
+    <form name="carDetails" id="carDetails" style="display: none">
+        <div id="transitInfoNew" style="padding:0 150px;padding-top: 30px">
+            <div class="biaotou" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info" style="color: #2452a5;line-height: 30px;font-size: 16px;">车辆基本信息</div>
+            </div>
+            <div class="neirong" style="height: 350px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>车牌号码：</span>
+                    <span class="zt" id="carPlateNum"></span>
+                    <input type="hidden" id="carId" name="carId" autocomplete="off" class="layui-input">
+                </p>
+                <p class="ziti" style="margin-top: 10px;width: 45%;float: right;">
+                    <span>车架号码：</span>
+                    <span class="zt" id="carFrameNum"></span>
+                </p>
+                <p class="ziti1">
+                    <span>车牌颜色：</span>
+                    <span class="zt" id="carPlateColor"></span>
+                </p>
+                <p class="ziti2">
+                    <span>道路运输证号：</span>
+                    <span class="zt" id="transitLicenceNum"></span>
+                </p>
+                <p class="ziti1">
+                    <span>业户名称：</span>
+                    <span class="zt" id="contactPerson"></span>
+                </p>
+                <p class="ziti2">
+                    <span>许可证号：</span>
+                    <span class="zt" id="jyCertNumber"></span>
+                </p>
+                <p class="ziti1">
+                    <span>车辆类型：</span>
+                    <span class="zt" id="carFunType"></span>
+                </p>
+                <p class="ziti2">
+                    <span>联系电话：</span>
+                    <span class="zt" id="contactPhone"></span>
+                </p>
+                <p class="ziti1">
+                    <span>地理信息：</span>
+                    <span class="zt" id="city"></span>
+                </p>
+                <p class="ziti2">
+                    <span>车辆品牌：</span>
+                    <span class="zt" id="carBrandsName"></span>
+                </p>
+                <p class="ziti1">
+                    <span>下一次检测定级日期：</span>
+                    <span class="zt" id="nextTestLevelDate"></span>
+                </p>
+                <p class="ziti2">
+                    <span>车辆型号：</span>
+                    <span class="zt" id="carProductCode"></span>
+                </p>
+                <p class="ziti2">
+                    <span>年审截止日期：</span>
+                    <span class="zt" id="operatingStopDate"></span>
+                </p>
+                <p class="ziti1">
+                    <span>北斗服务截止日期：</span>
+                    <span class="zt" ></span>
+                </p>
+                <p class="ziti1" >
+                    <span style="position: absolute;top: 40%;">车辆照片：</span>
+                    <span id="carPhoto" style="margin-left: 20%;">
+                    </span>
+                </p>
+
+            </div>
+            <div class="biaoti">
+                <div class="info">
+                    车辆北斗定位情况
+                </div>
+            </div>
+            <div class="neirong" style=" height: 80px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>定位时间：</span>
+                    <span class="zt"></span>
+                </p>
+                <p class="ziti" style=" margin-top: 10px;width: 45%;  float: right;">
+                    <span>定位位置：</span>
+                    <span class="zt"></span>
+                </p>
+            </div>
+            <div class="biaoti" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info">
+                    运输企业信息
+                </div>
+            </div>
+            <div class="neirong" style=" height: 200px;">
+                <p class="ziti" style="float: left;margin-top: 10px;width: 45%;">
+                    <span>运输企业名称：</span>
+                    <span class="zt" id="teamName"></span>
+                </p>
+                <p class="ziti" style=" margin-top: 10px;width: 45%;  float: right;">
+                    <span>经营许可证号：</span>
+                    <span class="zt" id="teamAdminCode"></span>
+                </p>
+                <p class="ziti1">
+                    <span>业户分类：</span>
+                    <span class="zt" id="companyLevel"></span>
+                </p>
+                <p class="ziti2">
+                    <span>许可证截止日期:</span>
+                    <span class="zt" id="licenseValidDate"></span>
+                </p>
+                <p class="ziti1">
+                    <span>法人代表：</span>
+                    <span class="zt" id="legalRepresentName"></span>
+                </p>
+                <p class="ziti2">
+                    <span>联系人：</span>
+                    <span class="zt" id="teamAdminName"></span>
+                </p>
+                <p class="ziti1">
+                    <span>联系电话：</span>
+                    <span class="zt" id="teamAdminPhone"></span>
+                </p>
+            </div>
+            <div class="biaoti" style="border: 1px solid #bcb6ae;height: 30px;text-align: center;background-color: #fffbfbd1;box-shadow: 1px 2px 10px rgba(34, 25, 25, 0.2);">
+                <div class="info">
+                    车辆检查情况
+                </div>
+            </div>
+            <div class="neirong3">
+                <table id="table_cz" class="table_cz" border="1" cellspacing="0" cellpadding="0">
+                    <tbody>
+                    <tr>
+                        <td align="center">车队名</td>
+                        <td align="center" id="teamNames"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">所有车辆技术档案填写情况，图片及内容是否完整</td>
+                        <td align="center" id="carInfo">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">所有车辆北斗定位情况是否定位</td>
+                        <td align="center" id="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">所有车辆年审时间是否超期</td>
+                        <td align="center" id="operatingStopDateYN"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">基本资料及制度录入情况是否合格</td>
+                        <td align="center" id="zhidu"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">安全台账上传情况是否按周期上传合格</td>
+                        <td align="center" id="ledger"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">安全文件接收回复情况是否回复完成</td>
+                        <td align="center" id="safeFile"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">从业人员培训情况是否符合要求</td>
+                        <td align="center" id="emp">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+        $tool:'tool'
+    }).use(['index', 'form','$tool','laydate'], function(){
+        var $ = layui.$
+            ,$tool = layui.$tool
+            ,laydate = layui.laydate
+            ,admin = layui.admin
+            ,form = layui.form;
+
+        carTableFormInit = function(){
+            var queryArgs = $tool.getQueryParam();
+            var id = queryArgs['id'];
+            var carDetails = document.getElementById('carDetails');
+            var index = layer.load(2,{
+                content: "<div style='margin-left:-18px;padding-top:44px;width:120px;color:black;'>正&nbsp;在&nbsp;加&nbsp;载</div>"
+            });
+            admin.req({
+                url:layui.setter.basePath + '/admin/bigdataBeidouSafetyCarInfo/selectBigPlatCarById.jsn',
+                data:{id},
+                datatype:'JSON',
+                method:"post",
+                success:function(res){
+                    debugger;
+                    layer.close(index);
+                    carDetails.style.display = "inline";
+                    var transitCarInfoList = res.data;
+                    if(res.success){
+                        if(transitCarInfoList.length>0){
+                            for(var i=0;i<transitCarInfoList.length;i++){
+                                if(transitCarInfoList[i].carPlateNum !== null && transitCarInfoList[i].carPlateNum !== "" ){
+                                    document.getElementById('carPlateNum').innerHTML = transitCarInfoList[i].carPlateNum;
+                                }
+                                if(transitCarInfoList[i].carId !== null && transitCarInfoList[i].carId !== "" ){
+                                    document.getElementById('carId').innerHTML = transitCarInfoList[i].carId;
+                                }
+                                if(transitCarInfoList[i].carFrameNum !== null && transitCarInfoList[i].carFrameNum !== "" ){
+                                    document.getElementById('carFrameNum').innerHTML = transitCarInfoList[i].carFrameNum;
+                                }
+                                if(transitCarInfoList[i].carPlateColor !== null && transitCarInfoList[i].carPlateColor !== "" ){
+                                    document.getElementById('carPlateColor').innerHTML = transitCarInfoList[i].carPlateColor;
+                                }
+                                if(transitCarInfoList[i].carFunType !== null && transitCarInfoList[i].carFunType !== "" ){
+                                    document.getElementById('carFunType').innerHTML = transitCarInfoList[i].carFunType;
+                                }
+                                if(transitCarInfoList[i].transitLicenceNum !== null && transitCarInfoList[i].transitLicenceNum !== "" ){
+                                    document.getElementById('transitLicenceNum').innerHTML = transitCarInfoList[i].transitLicenceNum;
+                                }
+                                if(transitCarInfoList[i].jyCertNumber !== null && transitCarInfoList[i].jyCertNumber !== "" ){
+                                    document.getElementById('jyCertNumber').innerHTML = transitCarInfoList[i].jyCertNumber;
+                                }
+                                if(transitCarInfoList[i].contactPhone !== null && transitCarInfoList[i].contactPhone !== "" ){
+                                    document.getElementById('contactPhone').innerHTML = transitCarInfoList[i].contactPhone;
+                                }
+                                if(transitCarInfoList[i].contactPerson !== null && transitCarInfoList[i].contactPerson !== "" ){
+                                    document.getElementById('contactPerson').innerHTML = transitCarInfoList[i].contactPerson;
+                                }
+                                if(transitCarInfoList[i].city !== null && transitCarInfoList[i].city !== "" ){
+                                    document.getElementById('city').innerHTML = transitCarInfoList[i].city;
+                                }
+                                if(transitCarInfoList[i].carBrandsName !== null && transitCarInfoList[i].carBrandsName !== "" ){
+                                    document.getElementById('carBrandsName').innerHTML = transitCarInfoList[i].carBrandsName;
+                                }
+                                if(transitCarInfoList[i].nextTestLevelDate !== null && transitCarInfoList[i].nextTestLevelDate !== "" ){
+                                    document.getElementById('nextTestLevelDate').innerHTML = transitCarInfoList[i].nextTestLevelDate;
+                                }
+                                if(transitCarInfoList[i].carProductCode !== null && transitCarInfoList[i].carProductCode !== "" ){
+                                    document.getElementById('carProductCode').innerHTML = transitCarInfoList[i].carProductCode;
+                                }
+                                if(transitCarInfoList[i].operatingStopDate !== null && transitCarInfoList[i].operatingStopDate !== "" ){
+                                    document.getElementById('operatingStopDate').innerHTML = transitCarInfoList[i].operatingStopDate;
+                                }
+                                if(transitCarInfoList[i].carPhoto !== null && transitCarInfoList[i].carPhoto !== "" ){
+                                    var carPhoto = document.getElementById('carPhoto');
+                                    carPhoto.innerHTML = '<img ' +
+                                        'height="115px;" ' +
+                                        'src=' +
+                                        transitCarInfoList[i].carPhoto +
+                                        '>';
+                                }
+                                if(transitCarInfoList[i].teamName !== null && transitCarInfoList[i].teamName !== "" ){
+                                    document.getElementById('teamName').innerHTML = transitCarInfoList[i].teamName;
+                                }
+                                if(transitCarInfoList[i].teamName !== null && transitCarInfoList[i].teamName !== "" ){
+                                    var teamNames = document.getElementById('teamNames');
+                                    teamNames.innerHTML = '<span class="zt">'+transitCarInfoList[i].teamName+'</span>';
+                                }
+                                if(transitCarInfoList[i].teamAdminCode !== null && transitCarInfoList[i].teamAdminCode !== "" ){
+                                    document.getElementById('teamAdminCode').innerHTML = transitCarInfoList[i].teamAdminCode;
+                                }
+                                if(transitCarInfoList[i].companyLevel !== null && transitCarInfoList[i].companyLevel !== "" ){
+                                    document.getElementById('companyLevel').innerHTML = transitCarInfoList[i].companyLevel;
+                                }
+                                if(transitCarInfoList[i].licenseValidDate !== null && transitCarInfoList[i].licenseValidDate !== "" ){
+                                    document.getElementById('licenseValidDate').innerHTML = transitCarInfoList[i].licenseValidDate;
+                                }
+                                if(transitCarInfoList[i].legalRepresentName !== null && transitCarInfoList[i].legalRepresentName !== "" ){
+                                    document.getElementById('legalRepresentName').innerHTML = transitCarInfoList[i].legalRepresentName;
+                                }
+                                if(transitCarInfoList[i].teamAdminName !== null && transitCarInfoList[i].teamAdminName !== "" ){
+                                    document.getElementById('teamAdminName').innerHTML = transitCarInfoList[i].teamAdminName;
+                                }
+                                if(transitCarInfoList[i].teamAdminPhone !== null && transitCarInfoList[i].teamAdminPhone !== "" ){
+                                    document.getElementById('teamAdminPhone').innerHTML = transitCarInfoList[i].teamAdminPhone;
+                                }
+                                if(transitCarInfoList[i].carInfo !== null && transitCarInfoList[i].carInfo !== "" ){
+                                    document.getElementById('carInfo').innerHTML = '<span class="zi">'+transitCarInfoList[i].carInfo+'</span>';
+                                }
+                                if(transitCarInfoList[i].operatingStopDateYN !== null && transitCarInfoList[i].operatingStopDateYN !== "" ){
+                                    var operatingStopDateYN = document.getElementById('operatingStopDateYN');
+                                    operatingStopDateYN.innerHTML = '<span class="zt">'+transitCarInfoList[i].operatingStopDateYN+'</span>';
+                                }
+                                if(transitCarInfoList[i].zhidu !== null && transitCarInfoList[i].zhidu !== "" ){
+                                    var zhidu= document.getElementById('zhidu');
+                                    zhidu.innerHTML = '<span class="zt">'+transitCarInfoList[i].zhidu+'</span>';
+                                }
+                                if(transitCarInfoList[i].safeFile !== null && transitCarInfoList[i].safeFile !== "" ){
+                                    var safeFile=document.getElementById('safeFile');
+                                    safeFile.innerHTML = '<span class="zt">'+transitCarInfoList[i].safeFile+'</span>';
+                                }
+                                if(transitCarInfoList[i].ledger !== null && transitCarInfoList[i].ledger !== "" ){
+                                    var ledger = document.getElementById('ledger');
+                                    ledger.innerHTML ='<span class="zt">'+ transitCarInfoList[i].ledger+'</span>';
+                                }
+                                if(transitCarInfoList[i].emp !== null && transitCarInfoList[i].emp !== "" ){
+                                    var emp = document.getElementById('emp');
+                                    emp.innerHTML = '<span class="zt">'+transitCarInfoList[i].emp+'</span>';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        carTableFormInit();
+
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+package com.edgedo.timedtask;
+
+
+import com.edgedo.common.util.HttpRequestUtil;
+import com.edgedo.common.util.JsonUtils;
+import com.edgedo.sys.entity.JsonData;
+
+import com.edgedo.sys.entity.TransitCarInfoList;
+import com.edgedo.sys.queryvo.BigdataBeidouSafetyCarInfoQuery;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BigPlatFormCar {
+
+    //查询平台数据
+    public static List<JsonData> bigPlatFormCarData(BigdataBeidouSafetyCarInfoQuery query){
+        List<JsonData> JsonDataList = new ArrayList<>();
+        if((query.getQueryObj().getSelectTime() !=null && query.getQueryObj().getSelectTime().equals("")) ||
+                (query.getQueryObj().getContactPerson()!=null&&query.getQueryObj().getContactPerson().equals("")) ||
+                (query.getQueryObj().getJyCertNumber()!=null && query.getQueryObj().getJyCertNumber().equals(""))||
+                (query.getQueryObj().getCarPlateNum()!=null && query.getQueryObj().getCarPlateNum().equals(""))){
+            String changeNetUrl = "http://data.qhd12328.com/transitCarBaseinfoController!getAllTransitCarInfoForAdmin.action";
+            Map<String,String> params = new HashMap<>();
+            params.put("queryBean.carPlateNum",query.getQueryObj().getCarPlateNum());//query.getQueryObj().getCarPlateNum()
+            params.put("queryBean.jyCertNumber",query.getQueryObj().getJyCertNumber());//query.getQueryObj().getJyCertNumber()
+            params.put("queryBean.carFrameNum",query.getQueryObj().getCarFrameNum());//query.getQueryObj().getCarFrameNum()
+            params.put("queryBean.contactPerson",query.getQueryObj().getContactPerson());//query.getQueryObj().getContactPerson()
+            Map<String,String> header = new HashMap<>();
+            header.put("Cookie","JSESSIONID=5F864F425299AF60604E32910A80011D");
+            String s = "";
+            try {
+                s = HttpRequestUtil.sendPostRequest(changeNetUrl,params,header);
+                System.out.println(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //解析json
+            //一层数据
+            JSONObject jsonObject = new JSONObject(s);
+            //二层数据
+            JSONArray jsonArray = jsonObject.optJSONArray("data");
+            for(int i=0;i<jsonArray.length();i++){
+                JsonData jsonData = new JsonData();
+                JSONObject jsonDataObject = jsonArray.optJSONObject(i);
+                //车辆数量
+                String carNum = jsonDataObject.optString("carNum");
+                Integer newCarNum = Integer.valueOf(carNum);
+                jsonData.setCarNum(newCarNum);
+                //企业名称
+                String teamName = jsonDataObject.optString("teamName");
+                jsonData.setTeamName(teamName);
+                //许可证号
+                String jingxingNum = jsonDataObject.optString("jingxingNum");
+                jsonData.setJingxingNum(jingxingNum);
+                //三层数据
+                String transitCarInfoList = jsonDataObject.optString("transitCarInfoList");
+                //System.out.println(transitCarInfoList);
+                List<TransitCarInfoList> transitCarInfoLists = new ArrayList<>();
+                //解析车辆详细信息
+                transitCarInfoLists = JsonUtils.parseList(transitCarInfoList,TransitCarInfoList.class);
+                //System.out.println(transitCarInfoLists);
+                jsonData.setTransitCarInfoList(transitCarInfoLists);
+            }
+        }
+        return JsonDataList;
+    }
+
+    //车辆详细信息
+    public static List<TransitCarInfoList> bigDataCarxiangqing(BigdataBeidouSafetyCarInfoQuery query){
+        List<JsonData> jsonDataList = bigPlatFormCarData(query);
+        List<TransitCarInfoList> transitCarInfos = new ArrayList<>();
+        for(JsonData jsonDatas:jsonDataList){
+            List<TransitCarInfoList> transitCarInfoList = jsonDatas.getTransitCarInfoList();
+            for(TransitCarInfoList transitCarInfo:transitCarInfoList){
+                if(transitCarInfo.getId().equals(query.getQueryObj().getBigCarID())){
+                    transitCarInfos.add(transitCarInfo);
+                }
+            }
+        }
+        return transitCarInfos;
+    }
+}
